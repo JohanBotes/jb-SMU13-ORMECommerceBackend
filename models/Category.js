@@ -15,8 +15,11 @@ Category.init(
     category_name: {
       type: DataTypes.STRING,
       allowNull: false,
+  }
   },
-    sequelize,
+  
+  {
+  sequelize,
     timestamps: false,
     freezeTableName: true,
     underscored: true,
