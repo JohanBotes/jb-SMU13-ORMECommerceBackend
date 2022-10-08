@@ -3,24 +3,22 @@ const { Category, Product } = require('../../models');
 
 // The `/api/categories` endpoint
 
-router.get('/', (req, res) => {
+router.get("/", async (req, res) => {
   // find all categories
   // be sure to include its associated Products
-  Category.findAll({
-    include: [ 
-      { model: Product,
-      attributes: ['id', 'product_name', 'price', 'stock']}
-    ]
-  })
-    .then(dataC => { 
-      if(!dataC) {
-        res.status(400).json({ message: 'No category'});
-      }
-    })
-    .catch(err => {
-      console.log(err);
-      res.status(500).json(err);
-    })
+  try {
+    const categoryData = await Category.findAll({
+      include: [ 
+        { model: Product,
+        attributes: ['id', 'product_name', 'price', 'stock']}
+      ]
+    });
+
+    res.status(200).json(categoryData);
+  } catch (error) {
+    console.log(err);
+    res.status(500).json(err);
+  }
 });
 
 router.get('/:id', (req, res) => {
@@ -46,7 +44,7 @@ router.get('/:id', (req, res) => {
   })
 });
 
-router.post('/', (req, res) => {
+router.post("/", (req, res) => {
   // create a new category
   Category.create({
     category_name: req.body.category_name
@@ -79,24 +77,25 @@ router.put('/:id', (req, res) => {
   })
 });
 
-router.delete('/:id', (req, res) => {
-  // delete a category by its `id` value
-  Category.destroy ({
-    truncate: true,
-    cascade: false,
-    where: { id: req.params.id },
-  })
-  .then(dataC => {
-    if (!dataC) {
-      res.status(404).json({ message: 'No category for this ID'})
+// DELETE a Category
+
+router.delete('/:id', async (req, res) => {
+  try {
+    const categoryData = await Category.destroy({
+      where: {
+        id: req.params.id
+      }
+    });
+
+    if (!categoryData) {
+      res.status(404).json({ message: 'No location found with this id!' });
       return;
     }
-    res.json(dataC)
-  })
-  .catch(err => {
-    console.log(err);
+
+    res.status(200).json(categoryData);
+  } catch (err) {
     res.status(500).json(err);
-  })
+  }
 });
 
 module.exports = router;
