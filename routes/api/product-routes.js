@@ -3,22 +3,21 @@ const { Product, Category, Tag, ProductTag } = require('../../models');
 
 // The `/api/products` endpoint
 
-router.get("/", async (req, res) => {
-  // find all categories
-  // be sure to include its associated Products
-  try {
-    const productData = await Product.findAll({
-      include: [ 
-        { model: Category, 
-        attributes: ['category_name']}
-      ]
-    });
-
-    res.status(200).json(productData);
-  } catch (error) {
-    console.log(err);
-    res.status(500).json(err);
-  }
+router.get("/", (req, res) => {
+  Product.findAll({
+    include: [
+      Category,
+      {
+        model: Tag,
+        through: ProductTag,
+      },
+    ],
+  })
+  .then((product) => res.json(product))
+  .catch((err) => {
+    console.log(err)
+    res.status(500).json(err)
+  })
 });
 
 // router.get('/', (req, res) => {
@@ -38,21 +37,26 @@ router.get('/:id', (req, res) => {
   // be sure to include its associated Products
   Product.findOne({
     where: { id: req.params.id },
-    include: [{
-      model: Category, Tag, ProductTag,
-      attributes: ['id', 'category_name']
-    }]
+    include: [
+      Category,
+      {
+      model: Tag, 
+      through: ProductTag,
+    // attributes: ['id', 'category_name']
+    },
+  ],
     })
-  .then(dataC => {
-    if (!dataC) {
-      res.status(404).json({ message: 'No Product for this ID'});
-      return;
-    }
-    res.json(dataC);
-  })
+  // .then(dataC => {
+  //   if (!dataC) {
+  //     res.status(404).json({ message: 'No Product for this ID'});
+  //     return;
+  //   }
+  //   res.json(dataC);
+  // })
+  .then((products) => res.json(products))
   .catch(err => {
     console.log(err);
-    res.status(500).json(err);
+    res.status(400).json(err);
   })
 });
 
@@ -69,7 +73,7 @@ router.post('/', (req, res) => {
   Product.create(req.body)
     .then((product) => {
       // if there's product tags, we need to create pairings to bulk create in the ProductTag model
-      if (req.body.tagIds.length) {
+      if (req.body.tagIds && req.body.tagIds.length) {
         const productTagIdArr = req.body.tagIds.map((tag_id) => {
           return {
             product_id: product.id,
@@ -93,8 +97,7 @@ router.put('/:id', (req, res) => {
   // update product data
   Product.update(req.body, {
     where: {
-      id: req.params.id,
-    },
+      id: req.params.id}
   })
     .then((product) => {
       // find all associated tags from ProductTag
@@ -130,8 +133,24 @@ router.put('/:id', (req, res) => {
     });
 });
 
-router.delete('/:id', (req, res) => {
+router.delete('/:id', async (req, res) => {
   // delete one product by its `id` value
+  try {
+    const productData = await Product.destroy({
+      where: {
+        id: req.params.id
+      }
+    });
+
+    if (!productData) {
+      res.status(404).json({ message: 'No Product found with this id!' });
+      return;
+    }
+
+    res.status(200).json(productData);
+  } catch (err) {
+    res.status(500).json(err);
+  }
 });
 
 module.exports = router;
