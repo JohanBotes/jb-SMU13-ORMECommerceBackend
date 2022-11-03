@@ -30,3 +30,4 @@ GIVEN a functional Express.js API <BR>
 
 ## Images - GET ALL, GET ONE, PUT, PUSH, DELETE
 
+  [Categories](
