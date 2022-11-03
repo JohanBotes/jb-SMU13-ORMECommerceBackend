@@ -30,8 +30,8 @@ GIVEN a functional Express.js API <BR>
 
 ## Images - GET ALL, GET ONE, PUT, PUSH, DELETE
 
-  [Categories](https://github.com/JohanBotes/jb-SMU13-ORMECommerceBackend/blob/main/ECommerceBackendCategories.png)
+  ![Categories](https://github.com/JohanBotes/jb-SMU13-ORMECommerceBackend/blob/main/ECommerceBackendCategories.png)
   
-  [Products](https://github.com/JohanBotes/jb-SMU13-ORMECommerceBackend/blob/main/ECommerceBackendProducts.png)
+  ![Products](https://github.com/JohanBotes/jb-SMU13-ORMECommerceBackend/blob/main/ECommerceBackendProducts.png)
    
-  [Tags](https://github.com/JohanBotes/jb-SMU13-ORMECommerceBackend/blob/main/ECommerceBackendTags.png)
+  ![Tags](https://github.com/JohanBotes/jb-SMU13-ORMECommerceBackend/blob/main/ECommerceBackendTags.png)
